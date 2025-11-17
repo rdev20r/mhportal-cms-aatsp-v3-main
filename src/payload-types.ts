@@ -70,6 +70,8 @@ export interface Config {
     pages: Page;
     posts: Post;
     events: Event;
+    resources: Resource;
+    'grants-and-awards': GrantsAndAward;
     media: Media;
     memories: Memory;
     categories: Category;
@@ -100,6 +102,8 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
+    'grants-and-awards': GrantsAndAwardsSelect<false> | GrantsAndAwardsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     memories: MemoriesSelect<false> | MemoriesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
@@ -128,11 +132,13 @@ export interface Config {
     header: Header;
     footer: Footer;
     'site-settings': SiteSetting;
+    'homepage-settings': HomepageSetting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'homepage-settings': HomepageSettingsSelect<false> | HomepageSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -928,6 +934,299 @@ export interface Event {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Curate lesson plans, worksheets, and teaching materials
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: number;
+  /**
+   * Resource name
+   */
+  title: string;
+  /**
+   * URL-friendly version (auto-generated)
+   */
+  slug: string;
+  /**
+   * What it is and why it's useful (2-3 sentences)
+   */
+  summary: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * What type of resource is this?
+   */
+  resourceType:
+    | 'lesson_plan'
+    | 'worksheet'
+    | 'assessment'
+    | 'video'
+    | 'article'
+    | 'website'
+    | 'professional_development'
+    | 'curriculum_guide'
+    | 'interactive_activity';
+  /**
+   * Is this a link to an external website or an uploaded file?
+   */
+  sourceType: 'external_link' | 'hosted_file';
+  /**
+   * Link to external resource
+   */
+  externalUrl?: string | null;
+  /**
+   * Upload PDF, Word doc, PowerPoint, or other file
+   */
+  hostedFile?: (number | null) | Media;
+  /**
+   * Who created this resource? (e.g., ACTFL, AATSP, Teachers Pay Teachers)
+   */
+  sourceOrganization?: string | null;
+  /**
+   * Organization logo (optional)
+   */
+  sourceOrganizationLogo?: (number | null) | Media;
+  /**
+   * Thumbnail or preview image for this resource
+   */
+  previewImage?: (number | null) | Media;
+  /**
+   * Primary category
+   */
+  category?: (number | null) | Category;
+  /**
+   * Add tags (type to search or create new)
+   */
+  tags?: (number | Tag)[] | null;
+  /**
+   * Who added this resource?
+   */
+  curator: number | User;
+  /**
+   * Select all grade levels this resource is appropriate for
+   */
+  gradeLevels?: ('prek' | 'elementary' | 'middle' | 'high' | 'college' | 'adult')[] | null;
+  /**
+   * Target language proficiency level (ACTFL scale)
+   */
+  languageLevel?:
+    | (
+        | 'novice_low'
+        | 'novice_mid'
+        | 'novice_high'
+        | 'intermediate_low'
+        | 'intermediate_mid'
+        | 'intermediate_high'
+        | 'advanced_low'
+        | 'advanced_mid'
+        | 'advanced_high'
+        | 'heritage'
+        | 'all'
+      )
+    | null;
+  /**
+   * Which language(s) does this resource focus on?
+   */
+  subjectFocus?: ('spanish' | 'portuguese' | 'both')[] | null;
+  /**
+   * What language is the resource content written in?
+   */
+  contentLanguage?: ('english' | 'spanish' | 'portuguese' | 'bilingual') | null;
+  /**
+   * Curriculum standards this resource aligns with (e.g., ACTFL World-Readiness Standards, Common Core, state standards)
+   */
+  standardsAlignment?: string | null;
+  /**
+   * Estimated time needed (e.g., "45 minutes", "2 class periods", "15 min video")
+   */
+  duration?: string | null;
+  /**
+   * File size (e.g., "2.5 MB", "15 MB")
+   */
+  fileSize?: string | null;
+  /**
+   * When was this external link last checked to ensure it still works?
+   */
+  lastVerified?: string | null;
+  /**
+   * Mark if this external link is broken or no longer available
+   */
+  isBrokenLink?: boolean | null;
+  /**
+   * Does accessing this resource require creating an account or logging in?
+   */
+  requiresLogin?: boolean | null;
+  /**
+   * Is there a cost associated with this resource?
+   */
+  cost?: ('free' | 'freemium' | 'paid') | null;
+  /**
+   * Feature this resource on the homepage
+   */
+  isFeatured?: boolean | null;
+  /**
+   * Number of times this resource has been viewed
+   */
+  viewsCount?: number | null;
+  /**
+   * Number of times this resource link has been clicked
+   */
+  clicksCount?: number | null;
+  /**
+   * Number of times hosted file has been downloaded
+   */
+  downloadsCount?: number | null;
+  dateAdded: string;
+  /**
+   * Archive this resource (hidden from public view)
+   */
+  isArchived?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Manage grant and award opportunities for educators
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "grants-and-awards".
+ */
+export interface GrantsAndAward {
+  id: number;
+  /**
+   * Opportunity name
+   */
+  title: string;
+  /**
+   * URL-friendly version (auto-generated)
+   */
+  slug: string;
+  /**
+   * Detailed description of the opportunity
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Type of opportunity
+   */
+  opportunityType: 'grant' | 'award' | 'fellowship' | 'scholarship';
+  /**
+   * Organization providing this opportunity (e.g., ACTFL, NEH)
+   */
+  provider: string;
+  /**
+   * Provider organization logo
+   */
+  providerLogo?: (number | null) | Media;
+  /**
+   * Link to application or more information
+   */
+  applicationUrl: string;
+  /**
+   * Application deadline
+   */
+  deadline: string;
+  /**
+   * When winners/recipients will be announced
+   */
+  announcementDate?: string | null;
+  /**
+   * Award/grant amount (e.g., "$5,000" or "$1,000-$5,000")
+   */
+  awardAmount?: string | null;
+  /**
+   * Who is eligible to apply? (e.g., K-12 teachers, college professors)
+   */
+  eligibility?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Select all applicable audiences
+   */
+  targetAudience?:
+    | ('k12' | 'college' | 'grad_students' | 'undergrad_students' | 'administrators' | 'researchers')[]
+    | null;
+  /**
+   * Which language(s) does this opportunity focus on?
+   */
+  subjectFocus?: ('spanish' | 'portuguese' | 'both' | 'general')[] | null;
+  /**
+   * Primary category
+   */
+  category?: (number | null) | Category;
+  /**
+   * Add tags (type to search or create new)
+   */
+  tags?: (number | Tag)[] | null;
+  /**
+   * Image for this opportunity
+   */
+  featuredImage?: (number | null) | Media;
+  /**
+   * Who added this opportunity?
+   */
+  curator: number | User;
+  /**
+   * Current status of this opportunity
+   */
+  status: 'upcoming' | 'active' | 'closed' | 'awarded';
+  /**
+   * Feature this opportunity on the homepage
+   */
+  isFeatured?: boolean | null;
+  /**
+   * Number of times this has been viewed
+   */
+  viewsCount?: number | null;
+  /**
+   * Number of times application link was clicked
+   */
+  clicksCount?: number | null;
+  dateAdded: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Share photo albums and memories from past events
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1525,6 +1824,14 @@ export interface PayloadLockedDocument {
         value: number | Event;
       } | null)
     | ({
+        relationTo: 'resources';
+        value: number | Resource;
+      } | null)
+    | ({
+        relationTo: 'grants-and-awards';
+        value: number | GrantsAndAward;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1815,6 +2122,76 @@ export interface EventsSelect<T extends boolean = true> {
   galleryImages?: T;
   isFeatured?: T;
   eventStatus?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  summary?: T;
+  resourceType?: T;
+  sourceType?: T;
+  externalUrl?: T;
+  hostedFile?: T;
+  sourceOrganization?: T;
+  sourceOrganizationLogo?: T;
+  previewImage?: T;
+  category?: T;
+  tags?: T;
+  curator?: T;
+  gradeLevels?: T;
+  languageLevel?: T;
+  subjectFocus?: T;
+  contentLanguage?: T;
+  standardsAlignment?: T;
+  duration?: T;
+  fileSize?: T;
+  lastVerified?: T;
+  isBrokenLink?: T;
+  requiresLogin?: T;
+  cost?: T;
+  isFeatured?: T;
+  viewsCount?: T;
+  clicksCount?: T;
+  downloadsCount?: T;
+  dateAdded?: T;
+  isArchived?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "grants-and-awards_select".
+ */
+export interface GrantsAndAwardsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  opportunityType?: T;
+  provider?: T;
+  providerLogo?: T;
+  applicationUrl?: T;
+  deadline?: T;
+  announcementDate?: T;
+  awardAmount?: T;
+  eligibility?: T;
+  targetAudience?: T;
+  subjectFocus?: T;
+  category?: T;
+  tags?: T;
+  featuredImage?: T;
+  curator?: T;
+  status?: T;
+  isFeatured?: T;
+  viewsCount?: T;
+  clicksCount?: T;
+  dateAdded?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -2481,6 +2858,307 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
+ * Customize all aspects of your homepage including hero, quick stops, community sections, and footer
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-settings".
+ */
+export interface HomepageSetting {
+  id: number;
+  heroSection: {
+    /**
+     * Small accent text displayed above the main heading (keep under 5 words)
+     */
+    accentText?: string | null;
+    /**
+     * Main headline - aim for 8-12 words that capture your mission
+     */
+    headline: string;
+    /**
+     * Supporting text below the headline (2-3 sentences)
+     */
+    description?: string | null;
+    /**
+     * The main action button (typically more prominent visually)
+     */
+    primaryCTA?: {
+      /**
+       * Button text
+       */
+      label?: string | null;
+      /**
+       * Internal link (starts with /) or external URL (starts with https://)
+       */
+      link?: string | null;
+    };
+    /**
+     * The secondary action button (typically less prominent)
+     */
+    secondaryCTA?: {
+      /**
+       * Button text
+       */
+      label?: string | null;
+      /**
+       * Internal link (starts with /) or external URL (starts with https://)
+       */
+      link?: string | null;
+    };
+    /**
+     * Hero section background image (recommended: 1920x1080px, under 2MB)
+     */
+    backgroundImage: number | Media;
+  };
+  /**
+   * Manage the quick access cards shown in the carousel. Cards appear in order from 1 to 5.
+   */
+  quickStops?: {
+    /**
+     * Highlight a chapter sponsor with their logo and description
+     */
+    featuredSponsor?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+      /**
+       * Select which sponsor to feature. To manage sponsors, go to Collections → Sponsors.
+       */
+      sponsor?: (number | null) | Sponsor;
+    };
+    /**
+     * 🔄 Auto-generated: Shows the next upcoming event from the Events collection
+     */
+    upcomingEvent?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+    };
+    /**
+     * Display a random resource or choose a specific one to feature
+     */
+    resourceCard?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+      /**
+       * Random mode keeps content fresh automatically. Specific mode lets you pin an important resource.
+       */
+      displayMode?: ('random' | 'specific') | null;
+      /**
+       * Select a specific resource to display. To manage resources, go to Collections → Resources.
+       */
+      resource?: (number | null) | Resource;
+    };
+    /**
+     * Display the latest news post or choose a specific one to feature
+     */
+    latestNews?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+      /**
+       * Latest mode automatically shows your newest published post. Specific mode lets you pin an important announcement.
+       */
+      displayMode?: ('latest' | 'specific') | null;
+      /**
+       * Select a specific news post to display. To manage news posts, go to Collections → Posts.
+       */
+      newsPost?: (number | null) | Post;
+    };
+    /**
+     * Display the latest newsletter with subscribe action
+     */
+    newsletter?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+      /**
+       * Latest mode automatically shows your newest newsletter. Specific mode lets you pin an older issue.
+       */
+      displayMode?: ('latest' | 'specific') | null;
+      /**
+       * Select a specific newsletter to display. To manage newsletters, go to Collections → Newsletters.
+       */
+      selectedNewsletter?: (number | null) | Newsletter;
+      primaryAction?: {
+        /**
+         * Button text
+         */
+        label?: string | null;
+        /**
+         * Link to subscription page or form
+         */
+        link?: string | null;
+      };
+    };
+  };
+  /**
+   * This section highlights your community with 4 cards: educator spotlight, upcoming events preview, latest news preview, and chapter achievement statistics.
+   */
+  communityInAction?: {
+    /**
+     * Background image for the Community in Action section (recommended: 1920x1080px, under 2MB)
+     */
+    backgroundImage?: (number | null) | Media;
+    /**
+     * Feature a spotlight on an educator from your chapter
+     */
+    educatorSpotlight?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+      /**
+       * Select which educator spotlight to feature. To manage spotlights, go to Collections → Educator Spotlights.
+       */
+      spotlight?: (number | null) | EducatorSpotlight;
+    };
+    /**
+     * 🔄 Auto-generated: Displays the next 3 upcoming events from the Events collection
+     */
+    upcomingEventsPreview?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+    };
+    /**
+     * 🔄 Auto-generated: Displays the 3 most recent published posts from the Posts collection
+     */
+    latestNewsPreview?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+    };
+    /**
+     * Add 2-6 achievement statistics to highlight chapter accomplishments (e.g., number of members, events hosted, years of service)
+     */
+    chapterAchievements?:
+      | {
+          /**
+           * The number or statistic
+           */
+          topText: string;
+          /**
+           * The label describing the statistic
+           */
+          bottomText: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Share your chapter's history and partnerships with 2 cards: a combined photos & timeline card, and a partners showcase featuring sponsors.
+   */
+  chapterStory?: {
+    /**
+     * Background image for the Chapter Story section (recommended: 1920x1080px, under 2MB)
+     */
+    backgroundImage?: (number | null) | Media;
+    /**
+     * 🔄 Auto-generated: Links to your photo gallery (Memories) and timeline content (Timeline Events)
+     */
+    photosTimeline?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+    };
+    /**
+     * Showcase your featured sponsor and partner organizations
+     */
+    partners?: {
+      /**
+       * Toggle off to temporarily hide this card without losing your settings
+       */
+      enabled?: boolean | null;
+      /**
+       * Choose the main featured sponsor for this section (displays prominently with description). To manage sponsors, go to Collections → Sponsors.
+       */
+      featuredSponsor?: (number | null) | Sponsor;
+      /**
+       * Select up to 5 partners to display in the grid below the featured sponsor (logos only)
+       */
+      partnerLogos?: (number | Sponsor)[] | null;
+    };
+  };
+  /**
+   * Configure your site footer with logo, description, social media links, contact info, copyright text, and legal links.
+   */
+  footer?: {
+    /**
+     * Logo image displayed in the footer (recommended: PNG with transparent background, max height 80px)
+     */
+    footerLogo?: (number | null) | Media;
+    /**
+     * Brief description or tagline displayed in the footer (1-2 sentences)
+     */
+    footerDescription?: string | null;
+    /**
+     * Add social media links for the footer
+     */
+    socialMediaLinks?:
+      | {
+          platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok' | 'other';
+          /**
+           * Full URL to your social media profile
+           */
+          url: string;
+          /**
+           * Optional custom label (defaults to platform name if left empty)
+           */
+          label?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Contact details displayed in the footer
+     */
+    contactInfo?: {
+      /**
+       * Physical location or address (optional)
+       */
+      location?: string | null;
+      /**
+       * Toggle to show/hide the contact form button in the footer
+       */
+      showContactForm?: boolean | null;
+      /**
+       * Link to open contact form (internal page, modal, or external URL)
+       */
+      contactFormLink?: string | null;
+    };
+    /**
+     * Copyright text displayed in the footer
+     */
+    copyrightText?: string | null;
+    /**
+     * Add legal and policy links (Privacy Policy, Terms of Service, etc.)
+     */
+    legalLinks?:
+      | {
+          /**
+           * Link text
+           */
+          label: string;
+          /**
+           * Link URL
+           */
+          link: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2554,6 +3232,151 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         style?: T;
       };
   googleAnalyticsId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-settings_select".
+ */
+export interface HomepageSettingsSelect<T extends boolean = true> {
+  heroSection?:
+    | T
+    | {
+        accentText?: T;
+        headline?: T;
+        description?: T;
+        primaryCTA?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+            };
+        secondaryCTA?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+            };
+        backgroundImage?: T;
+      };
+  quickStops?:
+    | T
+    | {
+        featuredSponsor?:
+          | T
+          | {
+              enabled?: T;
+              sponsor?: T;
+            };
+        upcomingEvent?:
+          | T
+          | {
+              enabled?: T;
+            };
+        resourceCard?:
+          | T
+          | {
+              enabled?: T;
+              displayMode?: T;
+              resource?: T;
+            };
+        latestNews?:
+          | T
+          | {
+              enabled?: T;
+              displayMode?: T;
+              newsPost?: T;
+            };
+        newsletter?:
+          | T
+          | {
+              enabled?: T;
+              displayMode?: T;
+              selectedNewsletter?: T;
+              primaryAction?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                  };
+            };
+      };
+  communityInAction?:
+    | T
+    | {
+        backgroundImage?: T;
+        educatorSpotlight?:
+          | T
+          | {
+              enabled?: T;
+              spotlight?: T;
+            };
+        upcomingEventsPreview?:
+          | T
+          | {
+              enabled?: T;
+            };
+        latestNewsPreview?:
+          | T
+          | {
+              enabled?: T;
+            };
+        chapterAchievements?:
+          | T
+          | {
+              topText?: T;
+              bottomText?: T;
+              id?: T;
+            };
+      };
+  chapterStory?:
+    | T
+    | {
+        backgroundImage?: T;
+        photosTimeline?:
+          | T
+          | {
+              enabled?: T;
+            };
+        partners?:
+          | T
+          | {
+              enabled?: T;
+              featuredSponsor?: T;
+              partnerLogos?: T;
+            };
+      };
+  footer?:
+    | T
+    | {
+        footerLogo?: T;
+        footerDescription?: T;
+        socialMediaLinks?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              label?: T;
+              id?: T;
+            };
+        contactInfo?:
+          | T
+          | {
+              location?: T;
+              showContactForm?: T;
+              contactFormLink?: T;
+            };
+        copyrightText?: T;
+        legalLinks?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+              id?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

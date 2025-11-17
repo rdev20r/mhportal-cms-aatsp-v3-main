@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
-import { User, UserRole } from '../collections/Users'
-import { validateUrl } from '../utilities/validateUrl'
+import { User, UserRole } from '../../collections/Users'
+import { validateUrl } from '../../utilities/validateUrl'
 
 export const HomepageSettings: GlobalConfig = {
   slug: 'homepage-settings',
@@ -486,11 +486,7 @@ export const HomepageSettings: GlobalConfig = {
                   admin: {
                     description: 'Add 2-6 achievement statistics to highlight chapter accomplishments (e.g., number of members, events hosted, years of service)',
                     components: {
-                      RowLabel: ({ data, index }: any) => {
-                        return data?.topText || data?.bottomText
-                          ? `${data.topText || '(number)'} – ${data.bottomText || '(label)'}`
-                          : `Achievement ${(index ?? 0) + 1}`
-                      },
+                      RowLabel: '@/globals/HomepageSettings/ChapterAchievementRowLabel#ChapterAchievementRowLabel',
                     },
                   },
                   fields: [
@@ -650,11 +646,7 @@ export const HomepageSettings: GlobalConfig = {
                   admin: {
                     description: 'Add social media links for the footer',
                     components: {
-                      RowLabel: ({ data, index }: any) => {
-                        return data?.platform && data?.url
-                          ? `${data.platform.charAt(0).toUpperCase() + data.platform.slice(1)} – ${data.url}`
-                          : `Social Link ${(index ?? 0) + 1}`
-                      },
+                      RowLabel: '@/globals/HomepageSettings/SocialMediaRowLabel#SocialMediaRowLabel',
                     },
                   },
                   fields: [
@@ -765,11 +757,7 @@ export const HomepageSettings: GlobalConfig = {
                   admin: {
                     description: 'Add legal and policy links (Privacy Policy, Terms of Service, etc.)',
                     components: {
-                      RowLabel: ({ data, index }: any) => {
-                        return data?.label && data?.link
-                          ? `${data.label} → ${data.link}`
-                          : `Legal Link ${(index ?? 0) + 1}`
-                      },
+                      RowLabel: '@/globals/HomepageSettings/LegalLinkRowLabel#LegalLinkRowLabel',
                     },
                   },
                   fields: [
