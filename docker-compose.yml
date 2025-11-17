@@ -1,0 +1,34 @@
+services:
+  payload:
+    image: node:24.11.1-alpine
+    init: true
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    working_dir: /home/node/app/
+    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+
+  postgres:
+    image: postgres:18.1-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mhportal_cms_v3
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    logging:
+      driver: none
+
+volumes:
+  postgres_data:
+  node_modules:
